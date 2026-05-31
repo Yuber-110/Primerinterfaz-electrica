@@ -120,6 +120,9 @@ button {
 .fp-gauge-card h3 {
   margin: 0 0 16px;
   text-align: center;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 800;
 }
 
 .phase-grid,
