@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Activity, Zap, Gauge, Power, BarChart3 } from "lucide-react";
 import {
   LineChart,
@@ -18,6 +18,8 @@ import logoDerecho from "./assets/logo-derecho.jpeg";
 const SIN_DATO = "-/-";
 const LIMITE_DESCONEXION_MS = 5000;
 const MAX_HISTORICO = 300;
+
+const API_URL = "https://interfaz-electrica-backend.onrender.com/datos";
 
 const COLORES = {
   faseA: "#2563eb",
@@ -143,24 +145,28 @@ function PhaseCard({ phase }) {
           unit="V"
           icon={Zap}
         />
+
         <DataBox
           label="Corriente"
           value={formatearValor(phase.corriente)}
           unit="A"
           icon={Activity}
         />
+
         <DataBox
           label="Potencia activa"
           value={formatearValor(phase.potenciaActiva)}
           unit="kW"
           icon={Power}
         />
+
         <DataBox
           label="Potencia reactiva"
           value={formatearValor(phase.potenciaReactiva)}
           unit="kVAr"
           icon={Gauge}
         />
+
         <DataBox
           label="Factor de potencia"
           value={formatearValor(phase.factorPotencia)}
@@ -227,9 +233,17 @@ function MedidorFactorPotencia({ titulo, valor, color }) {
 
         <circle cx={cx} cy={cy} r="6" fill={color} />
 
-        <text x="25" y="126" className="fp-label">-1</text>
-        <text x="103" y="20" className="fp-label">0</text>
-        <text x="184" y="126" className="fp-label">1</text>
+        <text x="25" y="126" className="fp-label">
+          -1
+        </text>
+
+        <text x="103" y="20" className="fp-label">
+          0
+        </text>
+
+        <text x="184" y="126" className="fp-label">
+          1
+        </text>
       </svg>
 
       <strong className="fp-value" style={{ color }}>
@@ -253,6 +267,8 @@ function GraficaLinea({ titulo, data, lineas, unidad }) {
             tickFormatter={(value) =>
               new Date(value).toLocaleTimeString("es-CO", {
                 hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
               })
             }
             interval="preserveStartEnd"
@@ -303,6 +319,8 @@ export default function App() {
   const [totalesLabVIEW, setTotalesLabVIEW] = useState(initialTotales);
   const [historico, setHistorico] = useState([]);
 
+  const ultimoReceivedAtRef = useRef(null);
+
   const limpiarDatos = () => {
     setData(initialData);
     setFrecuencia(SIN_DATO);
@@ -311,10 +329,11 @@ export default function App() {
   };
 
   useEffect(() => {
-    const intervalo = setInterval(async () => {
+    const obtenerDatos = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
-        const respuesta = await fetch(`${API_URL}/datos`);
+        const respuesta = await fetch(API_URL, {
+          cache: "no-store",
+        });
 
         if (!respuesta.ok) {
           limpiarDatos();
@@ -331,9 +350,21 @@ export default function App() {
         setConectado(true);
 
         setData({
-          faseA: { nombre: "Fase A", ...datos.faseA, activa: true },
-          faseB: { nombre: "Fase B", ...datos.faseB, activa: true },
-          faseC: { nombre: "Fase C", ...datos.faseC, activa: true },
+          faseA: {
+            nombre: "Fase A",
+            ...datos.faseA,
+            activa: true,
+          },
+          faseB: {
+            nombre: "Fase B",
+            ...datos.faseB,
+            activa: true,
+          },
+          faseC: {
+            nombre: "Fase C",
+            ...datos.faseC,
+            activa: true,
+          },
         });
 
         setTotalesLabVIEW({
@@ -347,41 +378,55 @@ export default function App() {
 
         setFrecuencia(datos.frecuencia ?? SIN_DATO);
 
-        const punto = {
-          timestamp: datos.receivedAt || new Date().toISOString(),
+        const esDatoNuevo =
+          datos.receivedAt && datos.receivedAt !== ultimoReceivedAtRef.current;
 
-          voltajeA: Number(datos.faseA?.voltaje || 0),
-          voltajeB: Number(datos.faseB?.voltaje || 0),
-          voltajeC: Number(datos.faseC?.voltaje || 0),
+        if (esDatoNuevo) {
+          ultimoReceivedAtRef.current = datos.receivedAt;
 
-          corrienteA: Number(datos.faseA?.corriente || 0),
-          corrienteB: Number(datos.faseB?.corriente || 0),
-          corrienteC: Number(datos.faseC?.corriente || 0),
+          const punto = {
+            timestamp: datos.receivedAt,
 
-          potenciaActivaA: Number(datos.faseA?.potenciaActiva || 0),
-          potenciaActivaB: Number(datos.faseB?.potenciaActiva || 0),
-          potenciaActivaC: Number(datos.faseC?.potenciaActiva || 0),
+            voltajeA: Number(datos.faseA?.voltaje || 0),
+            voltajeB: Number(datos.faseB?.voltaje || 0),
+            voltajeC: Number(datos.faseC?.voltaje || 0),
 
-          potenciaReactivaA: Number(datos.faseA?.potenciaReactiva || 0),
-          potenciaReactivaB: Number(datos.faseB?.potenciaReactiva || 0),
-          potenciaReactivaC: Number(datos.faseC?.potenciaReactiva || 0),
+            corrienteA: Number(datos.faseA?.corriente || 0),
+            corrienteB: Number(datos.faseB?.corriente || 0),
+            corrienteC: Number(datos.faseC?.corriente || 0),
 
-          activaTotal: Number(datos.totales?.potenciaActivaTotal || 0),
-          reactivaTotal: Number(datos.totales?.potenciaReactivaTotal || 0),
-          aparenteTotal: Number(datos.totales?.potenciaAparenteTotal || 0),
+            potenciaActivaA: Number(datos.faseA?.potenciaActiva || 0),
+            potenciaActivaB: Number(datos.faseB?.potenciaActiva || 0),
+            potenciaActivaC: Number(datos.faseC?.potenciaActiva || 0),
 
-          fpA: Number(datos.faseA?.factorPotencia || 0),
-          fpB: Number(datos.faseB?.factorPotencia || 0),
-          fpC: Number(datos.faseC?.factorPotencia || 0),
-          fpTotal: Number(datos.totales?.factorPotenciaTotal || 0),
-        };
+            potenciaReactivaA: Number(datos.faseA?.potenciaReactiva || 0),
+            potenciaReactivaB: Number(datos.faseB?.potenciaReactiva || 0),
+            potenciaReactivaC: Number(datos.faseC?.potenciaReactiva || 0),
 
-        setHistorico((prev) => [...prev.slice(-MAX_HISTORICO + 1), punto]);
+            activaTotal: Number(datos.totales?.potenciaActivaTotal || 0),
+            reactivaTotal: Number(datos.totales?.potenciaReactivaTotal || 0),
+            aparenteTotal: Number(datos.totales?.potenciaAparenteTotal || 0),
+
+            fpA: Number(datos.faseA?.factorPotencia || 0),
+            fpB: Number(datos.faseB?.factorPotencia || 0),
+            fpC: Number(datos.faseC?.factorPotencia || 0),
+            fpTotal: Number(datos.totales?.factorPotenciaTotal || 0),
+          };
+
+          setHistorico((prev) => [
+            ...prev.slice(-MAX_HISTORICO + 1),
+            punto,
+          ]);
+        }
       } catch (error) {
         limpiarDatos();
         console.error("Error leyendo datos:", error);
       }
-    }, 1000);
+    };
+
+    obtenerDatos();
+
+    const intervalo = setInterval(obtenerDatos, 1000);
 
     return () => clearInterval(intervalo);
   }, []);
