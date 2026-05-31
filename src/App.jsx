@@ -16,7 +16,7 @@ import logoIzquierdo from "./assets/logo-izquierdo.jpg";
 import logoDerecho from "./assets/logo-derecho.jpeg";
 
 const SIN_DATO = "-/-";
-const LIMITE_DESCONEXION_MS = 5000;
+const LIMITE_DESCONEXION_MS = 7000;
 const MAX_HISTORICO = 300;
 
 const API_URL = "https://interfaz-electrica-backend.onrender.com/datos";
