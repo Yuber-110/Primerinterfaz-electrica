@@ -468,7 +468,7 @@ export default function App() {
             />
 
             <img
-              className="header-logo"
+              className="header-logo header-logo-extra"
               src={logoExtra}
               alt="Logo extra"
             />
