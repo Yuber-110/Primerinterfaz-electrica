@@ -18,7 +18,7 @@ import logoDerecho from "./assets/logo-derecho.jpeg";
 
 const SIN_DATO = "-/-";
 const LIMITE_DESCONEXION_MS = 10000;
-const INTERVALO_CONSULTA_MS = 250;
+const INTERVALO_CONSULTA_MS = 50;
 const MAX_HISTORICO = 600;
 
 const API_URL = "https://interfaz-electrica-backend.onrender.com/datos";
