@@ -13,6 +13,7 @@ import {
 import "./App.css";
 
 import logoIzquierdo from "./assets/logo-izquierdo.jpg";
+import logoExtra from "./assets/logo-extra.png";
 import logoDerecho from "./assets/logo-derecho.jpeg";
 
 const SIN_DATO = "-/-";
@@ -459,11 +460,19 @@ export default function App() {
     <div className="app">
       <div className="container">
         <header className="header">
-          <img
-            className="header-logo header-logo-left"
-            src={logoIzquierdo}
-            alt="Logo izquierdo"
-          />
+          <div className="header-logos-left">
+            <img
+              className="header-logo"
+              src={logoIzquierdo}
+              alt="Logo izquierdo"
+            />
+
+            <img
+              className="header-logo"
+              src={logoExtra}
+              alt="Logo extra"
+            />
+          </div>
 
           <div className="header-title">
             <h1>Monitor eléctrico trifásico</h1>
