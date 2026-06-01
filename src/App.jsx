@@ -17,11 +17,13 @@ import logoExtra from "./assets/logo-extra.png";
 import logoDerecho from "./assets/logo-derecho.jpeg";
 
 const SIN_DATO = "-/-";
-const LIMITE_DESCONEXION_MS = 7000;
-const INTERVALO_CONSULTA_MS = 1000;
-const MAX_HISTORICO = 300;
+const LIMITE_DESCONEXION_MS = 10000;
+const INTERVALO_CONSULTA_MS = 250;
+const MAX_HISTORICO = 600;
 
 const API_URL = "https://interfaz-electrica-backend.onrender.com/datos";
+// Para pruebas locales rápidas usa:
+// const API_URL = "http://localhost:3001/datos";
 
 const COLORES = {
   faseA: "#2563eb",
@@ -105,6 +107,36 @@ function datosEstanVigentes(datos) {
   if (Number.isNaN(recibido)) return false;
 
   return Date.now() - recibido <= LIMITE_DESCONEXION_MS;
+}
+
+function calcularDominioAuto(data, lineas) {
+  const valores = [];
+
+  data.forEach((punto) => {
+    lineas.forEach((linea) => {
+      const valor = Number(punto[linea.dataKey]);
+
+      if (!Number.isNaN(valor)) {
+        valores.push(valor);
+      }
+    });
+  });
+
+  if (valores.length === 0) {
+    return ["auto", "auto"];
+  }
+
+  const minimo = Math.min(...valores);
+  const maximo = Math.max(...valores);
+
+  if (minimo === maximo) {
+    const margen = Math.abs(minimo) * 0.1 || 1;
+    return [minimo - margen, maximo + margen];
+  }
+
+  const margen = (maximo - minimo) * 0.15;
+
+  return [minimo - margen, maximo + margen];
 }
 
 function StatusLed({ active }) {
@@ -256,12 +288,17 @@ function MedidorFactorPotencia({ titulo, valor, color }) {
 }
 
 function GraficaLinea({ titulo, data, lineas, unidad }) {
+  const dominioY = calcularDominioAuto(data, lineas);
+
   return (
     <div className="chart-card">
       <h2>{titulo}</h2>
 
-      <ResponsiveContainer width="100%" height={280}>
-        <LineChart data={data}>
+      <ResponsiveContainer width="100%" height={280} debounce={80}>
+        <LineChart
+          data={data}
+          margin={{ top: 10, right: 25, left: 5, bottom: 5 }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis
@@ -277,7 +314,11 @@ function GraficaLinea({ titulo, data, lineas, unidad }) {
             minTickGap={150}
           />
 
-          <YAxis />
+          <YAxis
+            domain={dominioY}
+            allowDataOverflow={false}
+            tickFormatter={(value) => Number(value).toFixed(2)}
+          />
 
           <Tooltip
             labelFormatter={(value) =>
@@ -290,7 +331,10 @@ function GraficaLinea({ titulo, data, lineas, unidad }) {
                 year: "numeric",
               })}`
             }
-            formatter={(value, name) => [`${value} ${unidad}`, name]}
+            formatter={(value, name) => [
+              `${Number(value).toFixed(2)} ${unidad}`,
+              name,
+            ]}
           />
 
           <Legend />
@@ -298,13 +342,15 @@ function GraficaLinea({ titulo, data, lineas, unidad }) {
           {lineas.map((linea) => (
             <Line
               key={linea.dataKey}
-              type="monotone"
+              type="linear"
               dataKey={linea.dataKey}
               name={linea.name}
               stroke={linea.color}
-              strokeWidth={2.5}
+              strokeWidth={2}
               dot={false}
+              activeDot={false}
               isAnimationActive={false}
+              connectNulls={true}
             />
           ))}
         </LineChart>
@@ -322,6 +368,7 @@ export default function App() {
   const [historico, setHistorico] = useState([]);
 
   const ultimoReceivedAtRef = useRef(null);
+  const consultandoRef = useRef(false);
 
   const limpiarDatos = () => {
     setData(initialData);
@@ -332,6 +379,10 @@ export default function App() {
 
   useEffect(() => {
     const obtenerDatos = async () => {
+      if (consultandoRef.current) return;
+
+      consultandoRef.current = true;
+
       try {
         const respuesta = await fetch(API_URL, {
           cache: "no-store",
@@ -423,6 +474,8 @@ export default function App() {
       } catch (error) {
         limpiarDatos();
         console.error("Error leyendo datos:", error);
+      } finally {
+        consultandoRef.current = false;
       }
     };
 
