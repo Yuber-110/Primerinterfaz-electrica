@@ -31,21 +31,21 @@ const COLORES = {
   faseC: "#dc2626",
 
   activaA: "#7c3aed",
-  activaB: "#9333ea",
-  activaC: "#a855f7",
+  activaB: "#00ddff",
+  activaC: "#dd00ff",
 
-  reactivaA: "#ea580c",
-  reactivaB: "#f97316",
-  reactivaC: "#fb923c",
+  reactivaA: "#ff5900",
+  reactivaB: "#5500ff",
+  reactivaC: "#84f675",
 
-  activaTotal: "#9333ea",
-  reactivaTotal: "#ea580c",
-  aparenteTotal: "#0891b2",
+  activaTotal: "#9f41f7",
+  reactivaTotal: "#00ff22",
+  aparenteTotal: "#1bb1d7",
 
   fpA: "#2563eb",
-  fpB: "#16a34a",
-  fpC: "#dc2626",
-  fpTotal: "#9333ea",
+  fpB: "#2563eb",
+  fpC: "#2563eb",
+  fpTotal: "#2563eb",
 };
 
 const initialData = {
