@@ -18,11 +18,10 @@ import logoDerecho from "./assets/logo-derecho.jpeg";
 
 const SIN_DATO = "-/-";
 const LIMITE_DESCONEXION_MS = 10000;
-const INTERVALO_CONSULTA_MS = 0.5;
+const INTERVALO_CONSULTA_MS = 250;
 const MAX_HISTORICO = 600;
 
 const API_URL = "https://interfaz-electrica-backend.onrender.com/datos";
-// Para pruebas locales rápidas usa:
 // const API_URL = "http://localhost:3001/datos";
 
 const COLORES = {
@@ -137,6 +136,43 @@ function calcularDominioAuto(data, lineas) {
   const margen = (maximo - minimo) * 0.15;
 
   return [minimo - margen, maximo + margen];
+}
+
+function TooltipCompacto({ active, payload, label, unidad }) {
+  if (!active || !payload || payload.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="tooltip-compacto">
+      <div className="tooltip-hora">
+        {new Date(label).toLocaleString("es-CO", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })}
+      </div>
+
+      <div className="tooltip-lista">
+        {payload.map((item) => (
+          <div className="tooltip-fila" key={item.dataKey}>
+            <span
+              className="tooltip-color"
+              style={{ backgroundColor: item.color }}
+            ></span>
+
+            <span className="tooltip-nombre">{item.name}</span>
+
+            <strong className="tooltip-valor">
+              {Number(item.value).toFixed(2)} {unidad}
+            </strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function StatusLed({ active }) {
@@ -321,20 +357,8 @@ function GraficaLinea({ titulo, data, lineas, unidad }) {
           />
 
           <Tooltip
-            labelFormatter={(value) =>
-              `Hora: ${new Date(value).toLocaleString("es-CO", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })}`
-            }
-            formatter={(value, name) => [
-              `${Number(value).toFixed(2)} ${unidad}`,
-              name,
-            ]}
+            content={<TooltipCompacto unidad={unidad} />}
+            wrapperStyle={{ outline: "none" }}
           />
 
           <Legend />

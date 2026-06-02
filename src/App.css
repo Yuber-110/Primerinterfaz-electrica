@@ -302,6 +302,58 @@ button {
   font-weight: 800;
 }
 
+.tooltip-compacto {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  min-width: 150px;
+  max-width: 210px;
+  pointer-events: none;
+}
+
+.tooltip-hora {
+  font-weight: 800;
+  color: #111827;
+  font-size: 11px;
+  margin-bottom: 6px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 4px;
+}
+
+.tooltip-lista {
+  display: grid;
+  gap: 4px;
+}
+
+.tooltip-fila {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.tooltip-nombre {
+  color: #374151;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.tooltip-valor {
+  color: #111827;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 @media (min-width: 1100px) {
   .charts-layout {
     grid-template-columns: repeat(2, 1fr);
@@ -379,5 +431,18 @@ button {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 14px;
+  }
+
+  .tooltip-compacto {
+    font-size: 10px;
+    min-width: 130px;
+    max-width: 170px;
+    padding: 6px 8px;
+  }
+
+  .tooltip-hora,
+  .tooltip-nombre,
+  .tooltip-valor {
+    font-size: 10px;
   }
 }
