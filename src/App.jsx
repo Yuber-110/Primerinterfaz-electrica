@@ -84,7 +84,7 @@ const initialTotales = {
   factorPotenciaTotal: SIN_DATO,
 };
 
-function formatearValor(valor, decimales = 2) {
+function formatearValor(valor, decimales = 4) {
   if (
     valor === SIN_DATO ||
     valor === null ||
@@ -317,7 +317,7 @@ function MedidorFactorPotencia({ titulo, valor, color }) {
       </svg>
 
       <strong className="fp-value" style={{ color }}>
-        {fp.toFixed(2)}
+        {fp.toFixed(4)}
       </strong>
     </div>
   );
