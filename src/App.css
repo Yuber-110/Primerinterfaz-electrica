@@ -337,8 +337,8 @@ button {
   .header-logos-left .header-logo-extra {
     height: 85px !important;
     width: auto !important;
-    max-width: 190px !important;
-    max-height: 85px !important;
+    max-width: 150px !important;
+    max-height: 45px !important;
   }
 
   .header-logo-right {
