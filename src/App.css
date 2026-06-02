@@ -333,15 +333,16 @@ button {
 
   .header-title {
     max-width: 100%;
+    margin-top: 22px;
   }
 
   .header h1 {
-    font-size: 40px;
+    font-size: 38px;
     line-height: 0.95;
   }
 
   .header p {
-    font-size: 24px;
+    font-size: 23px;
     line-height: 1.25;
   }
 
@@ -353,23 +354,23 @@ button {
   }
 
   .header-logo {
-    width: 76px;
-    height: 76px;
+    width: 72px;
+    height: 72px;
   }
 
   .header-logos-left .header-logo-extra {
-    width: 130px !important;
+    width: 125px !important;
     height: auto !important;
-    max-width: 130px !important;
-    max-height: 62px !important;
+    max-width: 125px !important;
+    max-height: 58px !important;
   }
 
   .header-logo-right {
     right: 28px;
-    top: 120px;
+    top: 42px;
     transform: none;
-    width: 78px;
-    height: 78px;
+    width: 72px;
+    height: 72px;
   }
 
   .buttons {
