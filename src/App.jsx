@@ -84,7 +84,7 @@ const initialTotales = {
   factorPotenciaTotal: SIN_DATO,
 };
 
-function formatearValor(valor, decimales = 4) {
+function formatearValor(valor, decimales = 2) {
   if (
     valor === SIN_DATO ||
     valor === null ||
@@ -166,7 +166,7 @@ function TooltipCompacto({ active, payload, label, unidad }) {
             <span className="tooltip-nombre">{item.name}</span>
 
             <strong className="tooltip-valor">
-              {Number(item.value).toFixed(2)} {unidad}
+              {Number(item.value).toFixed(unidad === "FP" ? 4 : 2)} {unidad}
             </strong>
           </div>
         ))}
@@ -239,7 +239,7 @@ function PhaseCard({ phase }) {
 
         <DataBox
           label="Factor de potencia"
-          value={formatearValor(phase.factorPotencia)}
+          value={formatearValor(phase.factorPotencia, 4)}
           unit="FP"
           icon={Gauge}
         />
@@ -620,7 +620,7 @@ export default function App() {
 
                 <DataBox
                   label="Factor de potencia total"
-                  value={formatearValor(totalesLabVIEW.factorPotenciaTotal)}
+                  value={formatearValor(totalesLabVIEW.factorPotenciaTotal, 4)}
                   unit="FP"
                   icon={Gauge}
                 />
