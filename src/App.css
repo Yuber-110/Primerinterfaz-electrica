@@ -22,20 +22,20 @@ body {
 .header {
   position: relative;
   background: white;
-  padding: 24px 300px 24px 430px;
+  padding: 24px 220px;
   border-radius: 18px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
   margin-bottom: 24px;
   min-height: 160px;
 }
 
 .header-title {
-  flex: 1;
   text-align: center;
+  max-width: 620px;
+  margin: 0 auto;
 }
 
 .header h1 {
@@ -56,7 +56,6 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  max-width: 390px;
 }
 
 .header-logo {
@@ -320,6 +319,10 @@ button {
     text-align: center;
     padding: 165px 24px 24px;
     min-height: auto;
+  }
+
+  .header-title {
+    max-width: 100%;
   }
 
   .header-logos-left {
