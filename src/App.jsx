@@ -122,19 +122,18 @@ function calcularDominioAuto(data, lineas) {
   });
 
   if (valores.length === 0) {
-    return ["auto", "auto"];
+    return [0, 1];
   }
 
   const minimo = Math.min(...valores);
   const maximo = Math.max(...valores);
 
-  if (minimo === maximo) {
-    const margen = Math.abs(minimo) * 0.1 || 1;
-    return [minimo - margen, maximo + margen];
+  if (minimo >= 0) {
+    const margenSuperior = maximo * 0.15 || 1;
+    return [0, maximo + margenSuperior];
   }
 
-  const margen = (maximo - minimo) * 0.15;
-
+  const margen = (maximo - minimo) * 0.15 || 1;
   return [minimo - margen, maximo + margen];
 }
 
